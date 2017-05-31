@@ -9,8 +9,79 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  ListView
 } from 'react-native';
+
+class Purchase extends Component {
+  render() {
+    return (
+      <Text>Compra {this.props.message}</Text>
+      );
+  }
+}
+
+class ProcessPurchases extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {dataSource: []};
+    this.messages = [];
+
+    this.getMessages();
+    this.update();
+  }
+
+  update() {
+    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    this.state = {
+      dataSource: ds.cloneWithRows(this.messages)
+    };
+
+    console.log(this.messages);
+    console.log(this.state.dataSource);
+  }
+
+  getMessages() {
+    var SmsAndroid = require('react-native-sms-android');
+
+    var filter = {
+      box: 'inbox',
+      address: '11108',
+      indexFrom: 0
+      // maxCount: 10 // count of SMS to return each time
+    };
+
+    SmsAndroid.list(JSON.stringify(filter), (fail) => {
+      console.log("OH Snap: " + fail)
+    },
+    (count, smsList) => {
+      // console.log('Count: ', count);
+      // console.log('List: ', smsList);
+      var arr = JSON.parse(smsList);
+      for (var i = 0; i < arr.length; i++) {
+        var obj = arr[i];
+        // console.log("Index: " + i);
+        // console.log("-->" + obj.body);
+        this.messages.push({message: obj.body});
+      }
+    });
+  }
+
+  render() {
+    return (
+      <View style={{flex: 1, paddingTop: 22}}>
+        <Text>Mensagens</Text>
+        <ListView
+          enableEmptySections={true}
+          dataSource={this.state.dataSource}
+          renderRow={(rowData) => <Text>{rowData.message}</Text>}/>
+      </View>
+      );
+  }
+}
+
+
 
 export default class orcamentoSMS extends Component {
   render() {
@@ -29,6 +100,7 @@ export default class orcamentoSMS extends Component {
           Double tap R on your keyboard to reload,{'\n'}
           Shake or press menu button for dev menu
         </Text>
+        <ProcessPurchases></ProcessPurchases>
       </View>
     );
   }
