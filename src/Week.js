@@ -1,20 +1,20 @@
 import React, { PureComponent  } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 
-class Purchases extends PureComponent  {
+
+class Week extends PureComponent  {
   constructor(props) {
     super(props)
 
     this.messages = Array();
+    this.byWeek = [];
 
-    this.state = {messages:this.messages};
+    this.state = {messages:this.messages, byWeek:this.byWeek, budget: 320.00};
     this.fetchData();
 
-    this.byWeek = [];
   }
 
   async fetchData() {
-    console.log('fetchData');
     var SmsAndroid = require('react-native-sms-android');
     var filter = {
       box: 'inbox',
@@ -44,7 +44,7 @@ class Purchases extends PureComponent  {
           }
         }
         console.log(this.byWeek);
-        this.setState({messages: this.messages});
+        this.setState({messages: this.messages, byWeek: this.byWeek});
         this.forceUpdate();
       }
     );
@@ -68,17 +68,13 @@ class Purchases extends PureComponent  {
     return {card_number:card_number, value:value, date:date, place:place, week:date.getWeek(), message: m};
   }
 
-  showMessages() {
+  showWeeks() {
     var self = this;
-    return this.state.messages.map(function(m, i){
-      let cartao = m.card_number ? 'Cartão: '+m.card_number : '';
+    return this.state.byWeek.map(function(w, i){
       return(
-        <View key={i}>
-          <Text style={styles.message}>
-            {m.date.formatBR()}{'\n'}
-            {m.place} {cartao}{'\n'}
-            R$ {m.value}{'\n'}
-          </Text>
+        <View key={i} style={styles.week}>
+          <Text style={styles.message}>Semana {w.week}</Text>
+          <Text style={styles.message}>Total R$ {w.total.toFixed(2)}</Text>
         </View>
       );
     });
@@ -86,9 +82,14 @@ class Purchases extends PureComponent  {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
-        {this.showMessages()}
-      </ScrollView>
+      <View style={{flex:1}}>
+        <Text style={styles.budget}>Budget Semanal: R$ {this.state.budget.toFixed(2)}</Text>
+        <View style={styles.scroll}>
+          <ScrollView style={styles.scroll}>
+            {this.showWeeks()}
+          </ScrollView>
+        </View>
+      </View>
     );
   }
 }
@@ -96,9 +97,7 @@ class Purchases extends PureComponent  {
 export default function CurrentStateIndicator({ state, style }: *) {
   return (
     <View style={[styles.page, style]}>
-      <View>
-        <Purchases />
-      </View>
+      <Week />
     </View>
   );
 }
@@ -106,10 +105,26 @@ export default function CurrentStateIndicator({ state, style }: *) {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   container: {
     flex: 1,
+  },
+  scroll: {
+    flex: 1,
+    height: 300
+  },
+  week: {
+    backgroundColor: 'rgba(0, 0, 0, .1)',
+    borderRadius: 3,
+    padding: 5,
+    marginHorizontal:10,
+    marginBottom:10,
+  },
+  budget: {
+    textAlign: 'center',
+    backgroundColor: 'rgba(0, 0, 0, .1)',
+    borderRadius: 3,
+    padding: 20,
+    margin: 10,
   },
 });
