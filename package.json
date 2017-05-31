@@ -10,7 +10,8 @@
     "react": "16.0.0-alpha.6",
     "react-native": "0.44.2",
     "react-native-android-sms": "0.0.1",
-    "react-native-sms-android": "^0.4.1"
+    "react-native-sms-android": "^0.4.1",
+    "react-native-vector-icons": "^4.2.0"
   },
   "devDependencies": {
     "babel-jest": "20.0.3",
