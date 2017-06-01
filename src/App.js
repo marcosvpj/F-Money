@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import SimplePage from './SimplePage';
 import Purchases from './Purchases';
 import Week from './Week';
+import Configuration from './Configuration';
 
 // class ProcessPurchases extends PureComponent  {
 //   constructor(props) {
@@ -63,7 +64,10 @@ export default class orcamentoSMS extends PureComponent  {
     return <Icon name={route.icon} size={30} color="white" />;
   };
 
-  _handleChangeTab = index => this.setState({ index });
+  _handleChangeTab = index => {
+    this.setState({ index });
+    console.log(index);
+  }
 
   _renderHeader = props => {
     return (
@@ -78,7 +82,7 @@ export default class orcamentoSMS extends PureComponent  {
     );
   };
 
-_renderScene = ({ route }) => {
+  _renderScene = ({ route }) => {
     switch (route.key) {
       case '1':
         return (
@@ -90,7 +94,7 @@ _renderScene = ({ route }) => {
         return (
           <Week
             state={this.state}
-            style={{ backgroundColor: '#ff4081' }}/>
+            style={{ backgroundColor: '#50C1EA' }}/>
         );
       case '3':
         return (
@@ -100,7 +104,7 @@ _renderScene = ({ route }) => {
         );
       case '4':
         return (
-          <SimplePage
+          <Configuration
             state={this.state}
             style={{ backgroundColor: '#ff4081' }}/>
         );
