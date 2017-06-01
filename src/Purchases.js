@@ -9,18 +9,14 @@ class Purchases extends PureComponent  {
 
     this.state = {messages:this.messages};
     this.fetchData();
-
-    this.byWeek = [];
   }
 
   async fetchData() {
-    console.log('fetchData');
     var SmsAndroid = require('react-native-sms-android');
     var filter = {
       box: 'inbox',
       address: '11108',
       indexFrom: 0
-      // , maxCount: 2
     };
 
     SmsAndroid.list(
@@ -32,18 +28,10 @@ class Purchases extends PureComponent  {
         for (var i = 0; i < arr.length; i++) {
           var obj = arr[i];
           if (obj.body.match(/ITAU DEBITO/g)) {
-            // this.messages.push({message: obj.body});
             var purchase = this.parseMessage(obj.body);
             this.messages.push(purchase);
-
-            if (!this.byWeek[purchase.week]) {
-              this.byWeek[purchase.week] = {week:purchase.week, total:0, purchases:[]};
-            }
-            this.byWeek[purchase.week].purchases.push(purchase);
-            this.byWeek[purchase.week].total += purchase.value;
           }
         }
-        console.log(this.byWeek);
         this.setState({messages: this.messages});
         this.forceUpdate();
       }

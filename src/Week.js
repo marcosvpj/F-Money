@@ -14,16 +14,14 @@ export default function CurrentStateIndicator({ state, style }: *) {
 
       this.state = {messages:this.messages, byWeek:this.byWeek, budget: parseFloat(config.DEFAULT_WEEK_BUDGET)};
       this.fetchData();
-      this.loadConfig();
+      this.loadConfigWeek();
     }
 
-    async loadConfig() {
+    async loadConfigWeek() {
       try {
         const value = await AsyncStorage.getItem('@orcamentoSMS:budget_semanal');
         if (value !== null){
           this.setState({budget: parseFloat(value)});
-          console.log('load config for week');
-          console.log(value);
         }
       } catch (error) {
         // Error retrieving data
@@ -49,7 +47,6 @@ export default function CurrentStateIndicator({ state, style }: *) {
           for (var i = 0; i < arr.length; i++) {
             var obj = arr[i];
             if (obj.body.match(/ITAU DEBITO/g)) {
-              // this.messages.push({message: obj.body});
               var purchase = this.parseMessage(obj.body);
               this.messages.push(purchase);
 
@@ -60,7 +57,7 @@ export default function CurrentStateIndicator({ state, style }: *) {
               this.byWeek[purchase.week].total += purchase.value;
             }
           }
-          console.log(this.byWeek);
+
           this.setState({messages: this.messages, byWeek: this.byWeek});
           this.forceUpdate();
         }
@@ -90,9 +87,8 @@ export default function CurrentStateIndicator({ state, style }: *) {
       return this.state.byWeek.map(function(w, i){
         let good_icon = (<Icon name='smile-o' size={30} color="#2ACB34" />);
         let bad_icon = (<Icon name='frown-o' size={30} color="#BA043D" />);
-        console.log(w.total);
-        console.log(self.state.budget);
         let icon = w.total < self.state.budget ? good_icon : bad_icon;
+
         return(
           <View key={i} style={styles.week}>
             <View style={{marginVertical:14, marginHorizontal:10}}>

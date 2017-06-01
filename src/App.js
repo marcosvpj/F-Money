@@ -17,43 +17,12 @@ import Purchases from './Purchases';
 import Week from './Week';
 import Configuration from './Configuration';
 
-// class ProcessPurchases extends PureComponent  {
-//   constructor(props) {
-//     super(props);
-//     console.log('ProcessPurchases::constructor');
-//     console.log(this.props.messages);
-
-//     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
-
-//     this.state = {
-//       dataSource: ds.cloneWithRows(this.props.messages)
-//     };
-//   }
-
-//   render() {
-//     console.log('ProcessPurchases::render');
-//     return (
-//       <View style={{flex: 1, paddingTop: 22}}>
-//         <Text>Mensagens</Text>
-//         <ListView
-//           enableEmptySections={true}
-//           dataSource={this.state.dataSource}
-//           renderRow={(rowData) => <Text>{rowData.message}</Text>}/>
-//       </View>
-//       );
-//   }
-// }
-
-
 
 export default class orcamentoSMS extends PureComponent  {
-  // constructor(props) {
-  //   super(props);
-  // }
+
   state = {
     index: 0,
     routes: [
-      // { key: '1', title: 'Inicio' },
       { key: '2', title: 'Semana' },
       { key: '3', title: 'Todas' },
       { key: '4', icon: 'gear' },
@@ -66,7 +35,6 @@ export default class orcamentoSMS extends PureComponent  {
 
   _handleChangeTab = index => {
     this.setState({ index });
-    console.log(index);
   }
 
   _renderHeader = props => {
@@ -84,12 +52,6 @@ export default class orcamentoSMS extends PureComponent  {
 
   _renderScene = ({ route }) => {
     switch (route.key) {
-      case '1':
-        return (
-          <SimplePage
-            state={this.state}
-            style={{ backgroundColor: '#673ab7' }}/>
-        );
       case '2':
         return (
           <Week

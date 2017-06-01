@@ -3,14 +3,11 @@ import { View, Text, StyleSheet, AsyncStorage, TextInput, Button } from 'react-n
 
 import config from './config.json';
 
-export default function CurrentStateIndicator({ state, style }: *) {
   class Configuration extends PureComponent  {
     constructor(props) {
       super(props);
-      console.log('Configuration');
 
       this.state = {week_budget:config.DEFAULT_WEEK_BUDGET};
-
       this.loadConfig();
     }
 
@@ -19,7 +16,6 @@ export default function CurrentStateIndicator({ state, style }: *) {
         const value = await AsyncStorage.getItem('@orcamentoSMS:budget_semanal');
         if (value !== null){
           this.setState({week_budget: value});
-          console.log(value);
         }
       } catch (error) {
         // Error retrieving data
@@ -27,15 +23,22 @@ export default function CurrentStateIndicator({ state, style }: *) {
       }
     }
 
-    async salveConfig(value) {
-      console.log('salveConfig');
-      console.log(value);
+    updateConfig(value) {
+      this.setState({week_budget: value.text});
+      this.forceUpdate();
+    }
+
+    async salveConfig() {
       try {
-        await AsyncStorage.setItem('@orcamentoSMS:budget_semanal', value.text);
+        await AsyncStorage.setItem('@orcamentoSMS:budget_semanal', this.state.week_budget);
       } catch (error) {
         // Error saving data
         console.log(error);
       }
+    }
+
+    saveBudget = () => {
+      this.salveConfig();
     }
 
     render() {
@@ -45,11 +48,13 @@ export default function CurrentStateIndicator({ state, style }: *) {
             style={{height: 40}}
             defaultValue={this.state.week_budget}
             keyboardType='numeric'
-            onChangeText={(text) => this.salveConfig({text})}/>
+            onChangeText={(text) => this.updateConfig({text})}
+            onEndEditing={this.saveBudget}/>
         </View>
       );
     }
   }
+export default function CurrentStateIndicator({ state, style }: *) {
 
   return (
     <View style={[styles.page, style]}>
@@ -67,8 +72,6 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
     padding: 10,
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
   container: {
     backgroundColor: 'rgba(0, 0, 0, .1)',
