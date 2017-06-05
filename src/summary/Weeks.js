@@ -1,13 +1,50 @@
+import '../Date';
 import React, { PureComponent  } from 'react';
-import { View, Text, Button, ScrollView, StyleSheet, AsyncStorage } from 'react-native';
+import { View, Text, Button, ScrollView, StyleSheet, AsyncStorage, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import config from '../config.json';
 
-export default function CurrentStateIndicator({ state, style }: *) {
+export default function CurrentStateIndicator({ state, style, navigation }: *) {
+  class Week extends PureComponent {
+    constructor(props) {
+      super(props);
+      this.navigation = this.props.navigation;
+    }
+
+    render () {
+      let good_icon = (<Icon name='smile-o' size={30} color="#2ACB34" />);
+      let bad_icon = (<Icon name='frown-o' size={30} color="#BA043D" />);
+      let icon = this.props.total < this.props.budget ? good_icon : bad_icon;
+      let params = this.props;
+
+      let week_start = Date.prototype.getWeeksDays(this.props.n_week)[0].formatBR();
+      let week_end = Date.prototype.getWeeksDays(this.props.n_week)[1].formatBR();
+
+      return (
+        <TouchableHighlight
+          key={this.props.n_week}
+          onPress={() => this.navigation.navigate('Week', params)}
+          style={styles.week}>
+          <View style={{flex:1, flexDirection: 'row'}}>
+            <View style={{marginVertical:14, marginHorizontal:10}}>
+              {icon}
+            </View>
+            <View style={{flex:1, marginVertical:10}}>
+              <Text style={styles.message}>Semana {this.props.n_week} ({week_start} - {week_end})</Text>
+              <Text style={styles.message}>Total R$ {this.props.total.toFixed(2)}</Text>
+            </View>
+          </View>
+        </TouchableHighlight>
+      );
+    }
+  }
+
   class Weeks extends PureComponent  {
     constructor(props) {
-      super(props)
+      super(props);
+
+      this.navigation = navigation;
 
       this.messages = Array();
       this.processed = Array();
@@ -88,27 +125,21 @@ export default function CurrentStateIndicator({ state, style }: *) {
       date = new Date(2017, date.substring(3,5), date.substring(0,2));
 
       var place = m.match(/Local: (.*\. )/g);
+      place = place.pop();
 
       return {card_number:card_number, value:value, date:date, place:place, week:date.getWeek(), message: m};
     }
 
     showWeeks() {
       var self = this;
-      return this.state.byWeek.map(function(w, i){
-        let good_icon = (<Icon name='smile-o' size={30} color="#2ACB34" />);
-        let bad_icon = (<Icon name='frown-o' size={30} color="#BA043D" />);
-        let icon = w.total < self.state.budget ? good_icon : bad_icon;
-
-        return(
-          <View key={i} style={styles.week}>
-            <View style={{marginVertical:14, marginHorizontal:10}}>
-              {icon}
-            </View>
-            <View style={{flex:1, marginVertical:10}}>
-              <Text style={styles.message}>Semana {w.week}</Text>
-              <Text style={styles.message}>Total R$ {w.total.toFixed(2)}</Text>
-            </View>
-          </View>
+      return this.state.byWeek.map(function(w, i) {
+        return (
+          <Week key={w.week}
+            budget={self.state.budget}
+            n_week={w.week}
+            total={w.total}
+            navigation={self.navigation}
+            purchases={w.purchases} />
         );
       });
     }

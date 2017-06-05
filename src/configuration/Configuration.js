@@ -53,7 +53,7 @@ export default function screen() {
             onChangeText={(text) => this.updateConfig({text})}
             onEndEditing={() => this.saveBudget()}/>
 
-          <Text>Saldo:</Text>
+          <Text>Saldo disponivel:</Text>
         </View>
       );
     }

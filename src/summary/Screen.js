@@ -12,12 +12,11 @@ export default class SummaryScreen extends React.Component {
   render () {
     return (
       <View style={styles.page}>
-        <Weeks style={{ backgroundColor: '#50C1EA' }}/>
+        <Weeks navigation={this.props.navigation} style={{ backgroundColor: '#50C1EA' }}/>
       </View>
     );
   }
 }
-        // <Button title='gear' onPress={() => this.props.navigation.navigate('Config', { user: 'Lucy' })}></Button>
 
 const styles = StyleSheet.create({
   page: {
