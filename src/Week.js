@@ -1,23 +1,8 @@
 import React, { PureComponent  } from 'react';
-import { View, Text, ScrollView, StyleSheet, AsyncStorage } from 'react-native';
+import { View, Text, Button, ScrollView, StyleSheet, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import config from './config.json';
-
-state = {messages:this.messages, byWeek:this.byWeek, budget: parseFloat(config.DEFAULT_WEEK_BUDGET)};
-
-async function loadConfigWeek() {
-  AsyncStorage.getItem('@orcamentoSMS:budget_semanal')
-  .then( function(value) {
-    state.week_budget = value;
-    console.log('yey');
-    console.log(state);
-  })
-  .catch(function (reason) {
-      console.error('An error occurred', reason);
-  });
-}
-
 
 export default function CurrentStateIndicator({ state, style }: *) {
   class Week extends PureComponent  {
@@ -128,12 +113,14 @@ export default function CurrentStateIndicator({ state, style }: *) {
       });
     }
 
+    update() {
+      this.loadConfigWeek();
+      this.fetchData();
+    }
 
     render() {
-      // this.fetchData();
-      setInterval(() => this.fetchData(), 10000);
-      this.loadConfigWeek();
-      console.log('week::render');
+      setInterval(() => this.update(), 2000);
+
       return (
         <View style={{flex:1}}>
           <Text style={styles.budget}>Budget Semanal: R$ {this.state.budget.toFixed(2)}</Text>
@@ -146,8 +133,6 @@ export default function CurrentStateIndicator({ state, style }: *) {
       );
     }
   }
-
-  loadConfigWeek();
 
   console.log('week');
   return (

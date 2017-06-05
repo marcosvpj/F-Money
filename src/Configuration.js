@@ -3,49 +3,63 @@ import { View, Text, StyleSheet, AsyncStorage, TextInput, Button } from 'react-n
 
 import config from './config.json';
 
-state = {week_budget:config.DEFAULT_WEEK_BUDGET};
-
-function loadWeekBudget () {
-  console.log('load config');
-  AsyncStorage.getItem('@orcamentoSMS:budget_semanal')
-  .then( function(value) {
-    state.week_budget = value;
-  })
-  .catch(function (reason) {
-      console.error('An error occurred', reason);
-  });
-}
-
-function updateConfig(value) {
-  state.week_budget = value.text;
-}
-
-async function salveConfig() {
-  try {
-    await AsyncStorage.setItem('@orcamentoSMS:budget_semanal', state.week_budget);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-function saveBudget() {
-  salveConfig();
-}
 
 export default function screen() {
-  loadWeekBudget();
+  class Config extends PureComponent {
+    constructor(props) {
+      super(props);
+      this.state = {week_budget:config.DEFAULT_WEEK_BUDGET};
+      this.loadWeekBudget();
+    }
 
-  return (
-    <View style={styles.page}>
-      <Text>Valor limite para gastos por semana:</Text>
-      <TextInput
-        style={{height: 40}}
-        defaultValue={state.week_budget}
-        keyboardType='numeric'
-        onChangeText={(text) => updateConfig({text})}
-        onEndEditing={saveBudget}/>
-    </View>
-  );
+    async loadWeekBudget () {
+      console.log('config::loadBudget');
+      let value = await AsyncStorage.getItem('@orcamentoSMS:budget_semanal');
+      this.state.week_budget = value;
+      this.forceUpdate();
+    }
+
+    updateConfig(value) {
+      this.state.week_budget = value.text;
+      console.log('this.state');
+      console.log(this.state);
+    }
+
+    async salveConfig() {
+      console.log('config::salva');
+      try {
+        await AsyncStorage.setItem('@orcamentoSMS:budget_semanal', this.state.week_budget);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    saveBudget() {
+      console.log('save budget');
+      console.log(this.state);
+      // this.salveConfig();
+      AsyncStorage.setItem('@orcamentoSMS:budget_semanal', this.state.week_budget);
+    }
+
+    render() {
+      return (
+        <View style={styles.page}>
+          <Text>Valor limite para gastos por semana:</Text>
+          <TextInput
+            style={{height: 40}}
+            defaultValue={this.state.week_budget}
+            keyboardType='numeric'
+            onChangeText={(text) => this.updateConfig({text})}
+            onEndEditing={() => this.saveBudget()}/>
+
+          <Text>Saldo:</Text>
+        </View>
+      );
+    }
+  }
+
+  console.log('config::screen');
+  return (<Config/>);
 }
 
 const styles = StyleSheet.create({
