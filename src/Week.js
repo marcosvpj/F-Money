@@ -4,12 +4,28 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import config from './config.json';
 
+state = {messages:this.messages, byWeek:this.byWeek, budget: parseFloat(config.DEFAULT_WEEK_BUDGET)};
+
+async function loadConfigWeek() {
+  AsyncStorage.getItem('@orcamentoSMS:budget_semanal')
+  .then( function(value) {
+    state.week_budget = value;
+    console.log('yey');
+    console.log(state);
+  })
+  .catch(function (reason) {
+      console.error('An error occurred', reason);
+  });
+}
+
+
 export default function CurrentStateIndicator({ state, style }: *) {
   class Week extends PureComponent  {
     constructor(props) {
       super(props)
 
       this.messages = Array();
+      this.processed = Array();
       this.byWeek = [];
 
       this.state = {messages:this.messages, byWeek:this.byWeek, budget: parseFloat(config.DEFAULT_WEEK_BUDGET)};
@@ -30,6 +46,8 @@ export default function CurrentStateIndicator({ state, style }: *) {
     }
 
     async fetchData() {
+      let update = false;
+      console.log('week::fetchData');
       var SmsAndroid = require('react-native-sms-android');
       var filter = {
         box: 'inbox',
@@ -48,18 +66,25 @@ export default function CurrentStateIndicator({ state, style }: *) {
             var obj = arr[i];
             if (obj.body.match(/ITAU DEBITO/g)) {
               var purchase = this.parseMessage(obj.body);
+              if (this.processed.indexOf(obj._id) != -1) {
+                continue;
+              }
               this.messages.push(purchase);
+              this.processed.push(obj._id);
+              console.log(this.processed);
 
               if (!this.byWeek[purchase.week]) {
                 this.byWeek[purchase.week] = {week:purchase.week, total:0, purchases:[]};
               }
               this.byWeek[purchase.week].purchases.push(purchase);
               this.byWeek[purchase.week].total += purchase.value;
+              update = true;
             }
           }
 
           this.setState({messages: this.messages, byWeek: this.byWeek});
-          this.forceUpdate();
+          if (update)
+            this.forceUpdate();
         }
       );
     }
@@ -103,7 +128,12 @@ export default function CurrentStateIndicator({ state, style }: *) {
       });
     }
 
+
     render() {
+      // this.fetchData();
+      setInterval(() => this.fetchData(), 10000);
+      this.loadConfigWeek();
+      console.log('week::render');
       return (
         <View style={{flex:1}}>
           <Text style={styles.budget}>Budget Semanal: R$ {this.state.budget.toFixed(2)}</Text>
@@ -117,10 +147,11 @@ export default function CurrentStateIndicator({ state, style }: *) {
     }
   }
 
+  loadConfigWeek();
+
+  console.log('week');
   return (
-    <View style={[styles.page, style]}>
-      <Week />
-    </View>
+    <Week/>
   );
 }
 

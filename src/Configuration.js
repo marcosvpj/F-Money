@@ -3,67 +3,47 @@ import { View, Text, StyleSheet, AsyncStorage, TextInput, Button } from 'react-n
 
 import config from './config.json';
 
-  class Configuration extends PureComponent  {
-    constructor(props) {
-      super(props);
+state = {week_budget:config.DEFAULT_WEEK_BUDGET};
 
-      this.state = {week_budget:config.DEFAULT_WEEK_BUDGET};
-      this.loadConfig();
-    }
+function loadWeekBudget () {
+  console.log('load config');
+  AsyncStorage.getItem('@orcamentoSMS:budget_semanal')
+  .then( function(value) {
+    state.week_budget = value;
+  })
+  .catch(function (reason) {
+      console.error('An error occurred', reason);
+  });
+}
 
-    async loadConfig() {
-      try {
-        const value = await AsyncStorage.getItem('@orcamentoSMS:budget_semanal');
-        if (value !== null){
-          this.setState({week_budget: value});
-        }
-      } catch (error) {
-        // Error retrieving data
-        console.log(error);
-      }
-    }
+function updateConfig(value) {
+  state.week_budget = value.text;
+}
 
-    updateConfig(value) {
-      this.setState({week_budget: value.text});
-      this.forceUpdate();
-    }
-
-    async salveConfig() {
-      try {
-        await AsyncStorage.setItem('@orcamentoSMS:budget_semanal', this.state.week_budget);
-      } catch (error) {
-        // Error saving data
-        console.log(error);
-      }
-    }
-
-    saveBudget = () => {
-      this.salveConfig();
-    }
-
-    render() {
-      return (
-        <View>
-          <TextInput
-            style={{height: 40}}
-            defaultValue={this.state.week_budget}
-            keyboardType='numeric'
-            onChangeText={(text) => this.updateConfig({text})}
-            onEndEditing={this.saveBudget}/>
-        </View>
-      );
-    }
+async function salveConfig() {
+  try {
+    await AsyncStorage.setItem('@orcamentoSMS:budget_semanal', state.week_budget);
+  } catch (error) {
+    console.log(error);
   }
-export default function CurrentStateIndicator({ state, style }: *) {
+}
+
+function saveBudget() {
+  salveConfig();
+}
+
+export default function screen() {
+  loadWeekBudget();
 
   return (
-    <View style={[styles.page, style]}>
-      <Configuration/>
-      <View style={styles.container}>
-        <Text style={styles.text}>
-          Configuração
-        </Text>
-      </View>
+    <View style={styles.page}>
+      <Text>Valor limite para gastos por semana:</Text>
+      <TextInput
+        style={{height: 40}}
+        defaultValue={state.week_budget}
+        keyboardType='numeric'
+        onChangeText={(text) => updateConfig({text})}
+        onEndEditing={saveBudget}/>
     </View>
   );
 }
