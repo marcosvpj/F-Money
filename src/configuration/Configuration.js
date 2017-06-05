@@ -1,11 +1,12 @@
 import React, { PureComponent  } from 'react';
 import { View, Text, StyleSheet, AsyncStorage, TextInput, Button } from 'react-native';
 
-import config from './config.json';
+import config from '../config.json';
+import Config, { budget } from './Config';
 
 
 export default function screen() {
-  class Config extends PureComponent {
+  class ConfigurationScreen extends PureComponent {
     constructor(props) {
       super(props);
       this.state = {week_budget:config.DEFAULT_WEEK_BUDGET};
@@ -43,7 +44,7 @@ export default function screen() {
 
     render() {
       return (
-        <View style={styles.page}>
+        <View>
           <Text>Valor limite para gastos por semana:</Text>
           <TextInput
             style={{height: 40}}
@@ -59,7 +60,9 @@ export default function screen() {
   }
 
   console.log('config::screen');
-  return (<Config/>);
+  console.log(Config);
+  console.log(budget);
+  return (<ConfigurationScreen/>);
 }
 
 const styles = StyleSheet.create({

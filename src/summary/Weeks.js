@@ -2,10 +2,10 @@ import React, { PureComponent  } from 'react';
 import { View, Text, Button, ScrollView, StyleSheet, AsyncStorage } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import config from './config.json';
+import config from '../config.json';
 
 export default function CurrentStateIndicator({ state, style }: *) {
-  class Week extends PureComponent  {
+  class Weeks extends PureComponent  {
     constructor(props) {
       super(props)
 
@@ -56,7 +56,7 @@ export default function CurrentStateIndicator({ state, style }: *) {
               }
               this.messages.push(purchase);
               this.processed.push(obj._id);
-              console.log(this.processed);
+              // console.log(this.processed);
 
               if (!this.byWeek[purchase.week]) {
                 this.byWeek[purchase.week] = {week:purchase.week, total:0, purchases:[]};
@@ -136,7 +136,7 @@ export default function CurrentStateIndicator({ state, style }: *) {
 
   console.log('week');
   return (
-    <Week/>
+    <Weeks/>
   );
 }
 
