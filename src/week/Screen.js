@@ -18,17 +18,21 @@ export default class WeekScreen extends React.Component {
   }
 
   render () {
+
+    let week_start = Date.prototype.getWeeksDays(this.n_week)[0].formatBR();
+    let week_end = Date.prototype.getWeeksDays(this.n_week)[1].formatBR();
+
     return (
       <View style={styles.page}>
         <View style={{marginVertical:10}}>
-          <Text>Semana {this.n_week}</Text>
+          <Text>Semana {this.n_week} ({week_start} - {week_end})</Text>
           <Text>Transações {this.purchases.length}</Text>
           <Text>Total R$ {this.total.toFixed(2)}</Text>
         </View>
         <ScrollView>
           {
             this.purchases.map(function(w, i) {
-              return (<Text key={i.toString()}>{w.date.formatBR()} - R$ {w.value.toFixed(2)}{'\n'}</Text>)
+              return (<Text key={i.toString()} style={styles.itens}>{w.date.formatBR()} - R$ {w.value.toFixed(2)}{'\n'}{w.place}</Text>)
             })
           }
         </ScrollView>
@@ -43,4 +47,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  itens: {
+    marginBottom: 5,
+  }
 });
