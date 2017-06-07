@@ -1,6 +1,7 @@
 import '../Date';
 import React, { PureComponent  } from 'react';
-import { View, Text, Button, ScrollView, StyleSheet, AsyncStorage, TouchableHighlight } from 'react-native';
+import { Image, View, Text, ScrollView, StyleSheet, AsyncStorage, TouchableWithoutFeedback, TouchableNativeFeedback } from 'react-native';
+import { Card, Grid, Col, Row, Button, Tile } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import config from '../config.json';
@@ -13,30 +14,48 @@ export default function CurrentStateIndicator({ state, style, navigation }: *) {
     }
 
     render () {
-      let good_icon = (<Icon name='smile-o' size={30} color="#2ACB34" />);
-      let bad_icon = (<Icon name='frown-o' size={30} color="#BA043D" />);
+      let good_icon = (<Icon name='thumbs-up' size={30} color="#2ACB34" />);
+      let bad_icon = (<Icon name='thumbs-down' size={30} color="#BA043D" />);
       let icon = this.props.total < this.props.budget ? good_icon : bad_icon;
       let params = this.props;
 
       let week_start = Date.prototype.getWeeksDays(this.props.n_week)[0].formatBR();
       let week_end = Date.prototype.getWeeksDays(this.props.n_week)[1].formatBR();
 
+      let title = 'Semana ' + this.props.n_week + ' [' + week_start + ' - ' + week_end + ']';
       return (
-        <TouchableHighlight
-          key={this.props.n_week}
+        <Card
           onPress={() => this.navigation.navigate('Week', params)}
-          style={styles.week}>
-          <View style={{flex:1, flexDirection: 'row'}}>
-            <View style={{marginVertical:14, marginHorizontal:10}}>
-              {icon}
-            </View>
-            <View style={{flex:1, marginVertical:10}}>
-              <Text style={styles.message}>Semana {this.props.n_week} ({week_start} - {week_end})</Text>
-              <Text style={styles.message}>Total R$ {this.props.total.toFixed(2)}</Text>
-            </View>
-          </View>
-        </TouchableHighlight>
+          title={ title }
+          key={this.props.n_week}>
+            <Grid>
+              <Col style={{marginLeft: 15, width:40}}>{icon}<Text></Text></Col>
+              <Col style={{marginBottom: 10}}>
+                <Text>Transações: {this.props.purchases.length}</Text>
+                <Text>Total R$ {this.props.total.toFixed(2)}</Text>
+              </Col>
+            </Grid>
+                <Button
+                  raised
+                  icon={{name: 'description', size:30 }}
+                  title='Detalhes'
+                  onPress={() => this.navigation.navigate('Week', params)} />
+        </Card>
       );
+        // <TouchableNativeFeedback
+        //   key={this.props.n_week}
+        //   onPress={() => this.navigation.navigate('Week', params)}
+        //   style={styles.week}>
+        //   <View style={{flex:1, flexDirection: 'row'}}>
+        //     <View style={{marginVertical:14, marginHorizontal:10}}>
+        //       {icon}
+        //     </View>
+        //     <View style={{flex:1, marginVertical:10}}>
+        //       <Text style={styles.message}>Semana {this.props.n_week} ({week_start} - {week_end})</Text>
+        //       <Text style={styles.message}>Total R$ {this.props.total.toFixed(2)}</Text>
+        //     </View>
+        //   </View>
+        // </TouchableNativeFeedback>
     }
   }
 
@@ -154,9 +173,8 @@ export default function CurrentStateIndicator({ state, style, navigation }: *) {
 
       return (
         <View style={{flex:1}}>
-          <Text style={styles.budget}>Budget Semanal: R$ {this.state.budget.toFixed(2)}</Text>
           <View style={styles.scroll}>
-            <ScrollView style={styles.scroll}>
+            <ScrollView style={{flex:1, paddingBottom:5}}>
               {this.showWeeks()}
             </ScrollView>
           </View>
@@ -180,20 +198,13 @@ const styles = StyleSheet.create({
   },
   scroll: {
     flex: 1,
-    height: 300
+    height: 300,
   },
   week: {
     backgroundColor: 'rgba(0, 0, 0, .1)',
     borderRadius: 3,
     marginHorizontal:10,
     marginBottom:10,
-    flex: 1, flexDirection: 'row'
-  },
-  budget: {
-    textAlign: 'center',
-    backgroundColor: 'rgba(0, 0, 0, .1)',
-    borderRadius: 3,
-    padding: 20,
-    margin: 10,
+    flex: 1, flexDirection: 'row',
   },
 });
