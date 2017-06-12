@@ -125,11 +125,11 @@ export default function CurrentStateIndicator({ state, style, navigation }: *) {
             }
           }
 
+          this.byWeek.sort(function(a, b){
+            return new Date(a.date) - new Date(b.date);
+          });
           this.setState({messages: this.messages, byWeek: this.byWeek});
           if (update)
-            this.byWeek.sort(function(a, b){
-              return new Date(b.date) - new Date(a.date);
-            });
             this.forceUpdate();
         }
       );
