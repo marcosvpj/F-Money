@@ -119,12 +119,17 @@ export default function CurrentStateIndicator({ state, style, navigation }: *) {
               }
               this.byWeek[purchase.week].purchases.push(purchase);
               this.byWeek[purchase.week].total += purchase.value;
+
+
               update = true;
             }
           }
 
           this.setState({messages: this.messages, byWeek: this.byWeek});
           if (update)
+            this.byWeek.sort(function(a, b){
+              return new Date(b.date) - new Date(a.date);
+            });
             this.forceUpdate();
         }
       );
