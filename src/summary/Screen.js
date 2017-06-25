@@ -21,7 +21,7 @@ export default class SummaryScreen extends React.Component {
         <View>
           <Tile
             height={Dimensions.get('window').height * .25}
-            imageSrc={require('./title.jpg')}
+            source={require('./title.jpg')}
             title="F-Money"
             featured
             caption={caption}
